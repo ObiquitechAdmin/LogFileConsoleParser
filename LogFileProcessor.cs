@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Pastel;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -239,7 +242,7 @@ namespace RegexFind
                     if (matches.Count >= 2)
                     {
                         // Find the index of the second alphabet letter
-                        int index = logLine.IndexOf(matches[1].Value);
+                        int index = matches[1].Index;
 
                         // Truncate the characters up until the second alphabet letter
                         string truncatedLine = logLine.Substring(index);
@@ -256,6 +259,12 @@ namespace RegexFind
                     }
                 }
 
+                // Print the count of items in the list of truncated words
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("\nNumber of lines in truncatedWords: ");
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.WriteLine(truncatedWords.Count);
+
                 return truncatedWords;
             }
             catch (Exception ex)
@@ -271,6 +280,62 @@ namespace RegexFind
                 Console.ResetColor();
             }
         }
+
+        public void PrintWithColourBaseOnWarning(List<string> itemsToColour_p)
+        {
+            try
+            {
+                List<string> uniqueItems = GetUniqueItems(itemsToColour_p);
+                // create a List<string> of random hex numbers using CountUniqueItems(itemsToColour_p) as the number of items
+                List<string> randomHexNumbers = new List<string>(uniqueItems.Count);
+
+                // for loop up to the count of randomHexNumbers
+                for (int i = 0; i < randomHexNumbers.Capacity; i++)
+                {
+                    // add each 'hex' string (the result of GetRandomHexNumber(6)) to the list of random hex numbers
+                    randomHexNumbers.Add(GetRandomHexNumber(6).ToString());
+                    Console.WriteLine($"{uniqueItems[i].Pastel(randomHexNumbers[i])}");
+                }
+
+                //Console.WriteLine("CpuPowerCalculator".Pastel(Color.FromArgb(206, 74, 152)));
+                //Console.WriteLine($"Warning: {itemsToColour_p[0].Pastel(Color.FromArgb(206, 74, 152))}");
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.Write("\nAn error occurred: ");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Console.ResetColor();
+            }
+        }
+
+        public int CountUniqueItems(List<string> originalList_p)
+        {
+            HashSet<string> uniqueItems = new HashSet<string>(originalList_p);
+            return uniqueItems.Count;
+        }
+
+        public List<string> GetUniqueItems(List<string> originalList_p)
+        {
+            HashSet<string> uniqueItems = new HashSet<string>(originalList_p);
+            return new List<string>(uniqueItems);
+        }
+
+        static Random random = new Random();
+        public static string GetRandomHexNumber(int digits)
+        {
+            byte[] buffer = new byte[digits / 2];
+            random.NextBytes(buffer);
+            string result = String.Concat(buffer.Select(x => x.ToString("X2")).ToArray());
+            if (digits % 2 == 0)
+                return result;
+            return result + random.Next(16).ToString("X");
+        }
+
     }
 
 }

@@ -16,7 +16,7 @@ namespace RegexFind
             LogFileProcessor processor = new LogFileProcessor();
             string userInputLogFilePath = processor.GetLogFilePathFromUser();
             List<string> logLines = processor.ReadAndStoreLogLines(userInputLogFilePath);
-            processor.ProcessLogFile(logLines);
+            processor.PrintWithColourBaseOnWarning(processor.ProcessLogFile(logLines, 1));
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             WaitForEscapeKey();
